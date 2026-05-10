@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/quiz.dart';
 import '../store/quiz_store.dart';
+import '../screens/new_quiz_screen.dart';
 
 class QuizListScreen extends StatelessWidget {
   const QuizListScreen({super.key});
