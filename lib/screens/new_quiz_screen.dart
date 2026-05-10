@@ -56,45 +56,49 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
             child: const Text('Save'),
           ),
         ],
-        body: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: null,
-              ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: null,
-              ),
-              const Text(
-                'Questions',
-              ),
-              ..._questions.asMap().entries.map((entry) {
-                final index = entry.key;
-                final q = entry.value;
-                return _QuestionFormWidget(
-                    key: ValueKey(q.id),
-                    number: index + 1,
-                    data: q,
-                    // user can delete if # questions in this quiz > 1
-                    canRemove: _questions.length > 1,
-                    onRemove: () => _removeQuestion(index)
-                );
-              }),
-              OutlinedButton.icon( // trigger for adding a new quiz question
-                  onPressed: _addQuestion,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Question'),
-              ),
-            ]
-          )
-        )
       ),
-    ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            TextFormField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+              validator: null,
+            ),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: InputDecoration(labelText: 'Description'),
+              validator: null,
+            ),
+            const Text(
+              'Questions',
+            ),
+            ..._questions.asMap().entries.map((entry) {
+              final index = entry.key;
+              final q = entry.value;
+              return _QuestionFormWidget(
+                  key: ValueKey(q.id),
+                  number: index + 1,
+                  data: q,
+                  // user can delete if # questions in this quiz > 1
+                  canRemove: _questions.length > 1,
+                  onRemove: () => _removeQuestion(index)
+              );
+            }),
+            OutlinedButton.icon( // trigger for adding a new quiz question
+                onPressed: _addQuestion,
+                icon: const Icon(Icons.add),
+                label: const Text('Add Question'),
+            ),
+            ElevatedButton(
+              onPressed: _submit,
+              child: const Text('Save Quiz'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
