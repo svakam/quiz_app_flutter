@@ -13,11 +13,49 @@ class QuizListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        title: const Text('My Quizzes!'),
+        actions: [
+          IconButton( // add button
+            icon: const Icon(Icons.add),
+            tooltip: 'New Quiz',
+            onPressed: () {
+              // navigate to new quiz screen
+            }
+          )
+        ]
 
       ),
       // body to handle quiz list rendering
-      body: null,
+        // if no quizzes in store, state that to user and prompt creation
+      body: quizzes.isEmpty
+        ? const Center(child: Text('No quizzes yet! Tap + to create one.'))
+          : ListView.separated(
+        itemCount: quizzes.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (context, index) { // only show/render quizzes in view
+          final quiz = quizzes[index]; // get quiz at this index
+          return _QuizListItem( // use quiz ctor to load properties
+            quiz: quiz,
+            onTap: () {
+              // navigate to new quiz screen if tapped on
+            }
+          );
+        }
+      )
 
     );
+  }
+}
+
+class _QuizListItem extends StatelessWidget {
+  final Quiz quiz;
+  final VoidCallback onTap;
+
+  const _QuizListItem({required this.quiz, required this.onTap});
+
+  // for this quiz, show # of questions, title, and other info
+  @override
+  Widget build(BuildContext context) {
+    return ListTile();
   }
 }
