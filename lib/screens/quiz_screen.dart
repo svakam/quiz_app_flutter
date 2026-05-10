@@ -98,3 +98,33 @@ class _QuestionWidget extends StatelessWidget {
     );
   }
 }
+
+class _ResultsWidget extends StatelessWidget {
+  final int score;
+  final int total;
+  final VoidCallback onBackToList;
+
+  const _ResultsWidget({
+    required this.score,
+    required this.total,
+    required this.onBackToList,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = (score / total * 100).round();
+    return Column(
+      children: [
+        Text(
+          'Results: $score / $total ($pct%)',
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: onBackToList,
+          child: const Text('Back to Quiz List'),
+        ),
+      ],
+    );
+  }
+}
