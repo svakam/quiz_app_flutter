@@ -45,7 +45,26 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
   }
 
   void _submit() {
-    // needs validation functionality
+    // collect all input question info from user (list-ify lists too)
+    final questions = _questions
+        .map((q) => Question(
+          prompt: q.prompt.text.trim(),
+          correctAnswer: q.correct.text.trim(),
+          incorrectAnswers:
+            q.incorrect.map((c) => c.text.trim()).toList(),
+          ))
+        .toList();
+
+    // get current in-memory list of quizzes, add newly created quiz
+    context.read<QuizStore>().addQuiz(Quiz(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        questions: questions,
+        createdAt: DateTime.now(),
+    ));
+    
+    Navigator.pop(context);
   }
 
   @override
