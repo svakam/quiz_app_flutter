@@ -27,7 +27,10 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    for (final q in _questions) q.dispose();
+    for (final q in _questions) {
+      q.dispose();
+    }
+    super.dispose();
   }
 
   void _addQuestion() {
@@ -66,13 +69,17 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
               decoration: InputDecoration(labelText: 'Title'),
               validator: null,
             ),
+            const SizedBox(height: 12),
             TextFormField(
               controller: _descriptionController,
               decoration: InputDecoration(labelText: 'Description'),
+              maxLines: 2,
               validator: null,
             ),
+            const SizedBox(height: 12),
             const Text(
               'Questions',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             ..._questions.asMap().entries.map((entry) {
               final index = entry.key;
@@ -83,14 +90,16 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
                   data: q,
                   // user can delete if # questions in this quiz > 1
                   canRemove: _questions.length > 1,
-                  onRemove: () => _removeQuestion(index)
+                  onRemove: () => _removeQuestion(index),
               );
             }),
+            const SizedBox(height: 8),
             OutlinedButton.icon( // trigger for adding a new quiz question
                 onPressed: _addQuestion,
                 icon: const Icon(Icons.add),
                 label: const Text('Add Question'),
             ),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _submit,
               child: const Text('Save Quiz'),
@@ -118,7 +127,9 @@ class _QuestionFormData {
   void dispose() {
     prompt.dispose();
     correct.dispose();
-    for (final c in incorrect) c.dispose();
+    for (final c in incorrect) {
+      c.dispose();
+    }
   }
 }
 
@@ -140,6 +151,9 @@ class _QuestionFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -149,6 +163,7 @@ class _QuestionFormWidget extends StatelessWidget {
                 'Question $number',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
+              const Spacer(),
               if (canRemove)
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
@@ -157,27 +172,34 @@ class _QuestionFormWidget extends StatelessWidget {
                 ),
             ],
           ),
+          const SizedBox(height: 8),
           TextFormField(
             controller: data.prompt,
             decoration: const InputDecoration(labelText: 'Prompt'),
+            maxLines: 2,
+            minLines: 1,
             // need validator
           ),
           TextFormField(
             controller: data.correct,
             decoration: const InputDecoration(labelText: 'Correct'),
           ),
+          const SizedBox(height: 8),
           ...data.incorrect.asMap().entries.map((entry) {
             final i = entry.key;
-            return TextFormField(
-              controller: entry.value,
-              decoration: InputDecoration(
-                labelText: 'Incorrect Answer ${i + 1}',
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: TextFormField(
+                controller: entry.value,
+                decoration: InputDecoration(
+                  labelText: 'Incorrect Answer ${i + 1}',
+                ),
+                // need validator
               ),
-              // need validator
             );
           }),
         ],
       ),
-    );
+    ));
   }
 }

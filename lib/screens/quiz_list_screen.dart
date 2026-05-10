@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/quiz.dart';
 import '../store/quiz_store.dart';
-import '../screens/new_quiz_screen.dart';
+import 'new_quiz_screen.dart';
 
 class QuizListScreen extends StatelessWidget {
   const QuizListScreen({super.key});
@@ -33,18 +33,18 @@ class QuizListScreen extends StatelessWidget {
         ? const Center(child: Text('No quizzes yet! Tap + to create one.'))
           : ListView.separated(
         itemCount: quizzes.length,
+        // only show/render quizzes in view
         separatorBuilder: (_, __) => const Divider(height: 1),
-        itemBuilder: (context, index) { // only show/render quizzes in view
+        itemBuilder: (context, index) {
           final quiz = quizzes[index]; // get quiz at this index
           return _QuizListItem( // use quiz ctor to load properties
             quiz: quiz,
             onTap: () {
-              // navigate to new quiz screen if tapped on
+              // navigate to quiz (i.e. taking the quiz) if tapped on
             }
           );
         }
-      )
-
+      ),
     );
   }
 }
