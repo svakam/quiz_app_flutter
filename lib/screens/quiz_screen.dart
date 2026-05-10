@@ -83,10 +83,18 @@ class _QuestionWidget extends StatelessWidget {
               }
             }
 
-
-          })
-        ]
-      )
+            return RadioListTile<String>(
+              title: Text(answer),
+              secondary: trailing,
+              value: answer,
+              groupValue: selectedAnswer,
+              onChanged: null,
+              dense: true,
+            );
+          }),
+          const Divider(),
+        ],
+      ),
     );
   }
 }
