@@ -18,12 +18,12 @@ class QuizListScreen extends StatelessWidget {
           IconButton( // add button
             icon: const Icon(Icons.add),
             tooltip: 'New Quiz',
-            onPressed: () {
-              // navigate to new quiz screen
-            }
-          )
-        ]
-
+            onPressed: () => Navigator.push( // Navigator obj to create q screen
+              context,
+              MaterialPageRoute(builder: (_) => const NewQuizScreen()),
+            ),
+          ),
+        ],
       ),
       // body to handle quiz list rendering
         // if no quizzes in store, state that to user and prompt creation
