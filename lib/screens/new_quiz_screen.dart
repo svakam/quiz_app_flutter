@@ -45,6 +45,9 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
   }
 
   void _submit() {
+    // VALIDATION: if invalid state, return ctrl back to quiz screen user input
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
     // collect all input question info from user (list-ify lists too)
     final questions = _questions
         .map((q) => Question(
@@ -86,14 +89,17 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(labelText: 'Title'),
-              validator: null,
+              textCapitalization: TextCapitalization.sentences,
+              validator: (v) =>
+                (v == null || v.trim().isEmpty) ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _descriptionController,
               decoration: InputDecoration(labelText: 'Description'),
               maxLines: 2,
-              validator: null,
+              validator: (v) =>
+                (v == null || v.trim().isEmpty) ? 'Required' : null,
             ),
             const SizedBox(height: 12),
             const Text(
@@ -197,7 +203,8 @@ class _QuestionFormWidget extends StatelessWidget {
             decoration: const InputDecoration(labelText: 'Prompt'),
             maxLines: 2,
             minLines: 1,
-            // need validator
+            validator: (v) =>
+            (v == null || v.trim().isEmpty) ? 'Required' : null,
           ),
           TextFormField(
             controller: data.correct,
@@ -213,7 +220,8 @@ class _QuestionFormWidget extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: 'Incorrect Answer ${i + 1}',
                 ),
-                // need validator
+                validator: (v) =>
+                  (v == null || v.trim().isEmpty) ? 'Required': null,
               ),
             );
           }),
