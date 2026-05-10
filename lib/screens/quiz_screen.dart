@@ -17,7 +17,7 @@ class _QuizScreenState extends State<QuizScreen> {
   late final List<List<String>> _shuffledAnswers;
   final Map<int, String> _selected = {};
   bool _submitted = false; // track if user submitted
-  int score = 0;
+  int _score = 0;
 
   @override
   void initState() {
@@ -32,7 +32,26 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void _submit() {
+    final total = widget.quiz.questions.length;
+    if (_selected.length < total) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            '${total - _selected.length} question${total - _selected.length == 1
+              ? '' : 's'} not yet answered!',
+          ),
+      ));
+      return;
+    }
 
+    int score = 0;
+    for (int i = 0; i < total; i++) {
+      if (_selected[i] == widget.quiz.questions[i].correctAnswer) score++;
+    }
+
+    setState(() {
+      _submitted = true;
+      _score = score;
+    });
   }
 
   @override
