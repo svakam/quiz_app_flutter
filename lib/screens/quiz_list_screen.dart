@@ -27,6 +27,7 @@ class QuizListScreen extends StatelessWidget {
       ),
       // body to handle quiz list rendering
         // if no quizzes in store, state that to user and prompt creation
+        // else retrieve quizzes via anon fn in itemBuilder
       body: quizzes.isEmpty
         ? const Center(child: Text('No quizzes yet! Tap + to create one.'))
           : ListView.separated(
@@ -56,6 +57,14 @@ class _QuizListItem extends StatelessWidget {
   // for this quiz, show # of questions, title, and other info
   @override
   Widget build(BuildContext context) {
-    return ListTile();
+    final count = quiz.questions.length; // store # questions in this quiz
+    return ListTile(
+      title: Text(quiz.title),
+      subtitle: Text( // update 'question' grammar by # questions available
+        '${quiz.description}\n$count question${count == 1 ? '' : 's'}',
+      ),
+      isThreeLine: true,
+      onTap: onTap,
+    );
   }
 }
