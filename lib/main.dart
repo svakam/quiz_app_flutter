@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
           colorScheme: .fromSeed(seedColor: Colors.black12),
         ),
         debugShowCheckedModeBanner: false,
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        home: const QuizListScreen(),
       )
     );
   }
