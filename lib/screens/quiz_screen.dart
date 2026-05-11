@@ -19,6 +19,8 @@ class _QuizScreenState extends State<QuizScreen> {
   final Map<int, String> _selected = {};
   bool _submitted = false; // track if user submitted
   int _score = 0;
+  Timer? _timer;
+  int? _secondsRemaining;
 
   @override
   void initState() {
@@ -30,39 +32,83 @@ class _QuizScreenState extends State<QuizScreen> {
       final answers = List<String>.from(q.allAnswers)..shuffle(rand);
       return answers;
     }).toList();
+
+    // initialize timer upon starting quiz
+    if (widget.quiz.timeLimitSeconds != null) {
+      _secondsRemaining = widget.quiz.timeLimitSeconds;
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (_secondsRemaining == null) return;
+        if (_secondsRemaining! <= 1) {
+          _submit(autoSubmit: true);
+        } else {
+          setState(() => _secondsRemaining = _secondsRemaining! - 1);
+        }
+      });
+    }
   }
 
-  void _submit() {
-    final total = widget.quiz.questions.length;
-    // don't allow submission unless all questions answered
-    if (_selected.length < total) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  @override
+  void dispose() {
+    _timer?.cancel(); // ensure timer stops wherever upon disposing state
+    super.dispose();
+  }
+
+  // submit now accepts auto-submission option
+  void _submit({bool autoSubmit = false}) {
+    _timer?.cancel(); // if timer exists for this quiz, stop it
+
+    if (!autoSubmit) {
+      final total = widget.quiz.questions.length;
+      // don't allow submission unless all questions answered
+      if (_selected.length < total) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             '${total - _selected.length} question${total - _selected.length == 1
-              ? '' : 's'} not yet answered!',
+                ? '' : 's'} not yet answered!',
           ),
-      ));
-      return;
+        ));
+        return;
+      }
     }
 
     int score = 0;
-    for (int i = 0; i < total; i++) {
+    for (int i = 0; i < widget.quiz.questions.length; i++) {
       if (_selected[i] == widget.quiz.questions[i].correctAnswer) score++;
     }
 
     setState(() {
       _submitted = true;
       _score = score;
+      _secondsRemaining = 0;
     });
+  }
+
+  // helper function for formatting time into minutes
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final sec = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
     final quiz = widget.quiz;
     final questions = quiz.questions;
+    final hasTimer = _secondsRemaining != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(quiz.title)),
+      appBar: AppBar(
+          title: Text(quiz.title),
+          actions: [
+            if (hasTimer)
+              Text(
+                _formatTime(_secondsRemaining!),
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+          ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
