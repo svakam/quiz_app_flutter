@@ -33,6 +33,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _submit() {
     final total = widget.quiz.questions.length;
+    // don't allow submission unless all questions answered
     if (_selected.length < total) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -56,9 +57,58 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final quiz = widget.quiz;
+    final questions = quiz.questions;
 
+    return Scaffold(
+      appBar: AppBar(title: Text(quiz.title)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(quiz.description),
+          const SizedBox(height: 4),
+          Text( // length of questions check grammar
+            '${questions.length} question${questions.length == 1 ? '' : 's'}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const Divider(height: 20),
+
+          // question widget mapping: for each question, check
+          ...questions.asMap().entries.map((entry) {
+            final index = entry.key;
+            final question = entry.value;
+            return _QuestionWidget(
+              number: index + 1,
+              question: question,
+              shuffledAnswers: _shuffledAnswers[index],
+              selectedAnswer: _selected[index],
+              submitted: _submitted,
+              onSelect: (answer) {
+                if (!_submitted) {
+                  setState(() => _selected[index] = answer);
+                }
+              },
+            );
+          }),
+          const SizedBox(height: 8),
+          if (!_submitted)
+            ElevatedButton(
+              onPressed: _submit,
+              child: Text(
+                'Submit (${_selected.length}/${questions.length} answered)',
+              ),
+            )
+          else
+            _ResultsWidget(
+              score: _score,
+              total: questions.length,
+              onBackToList: () => Navigator.pop(context),
+            ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
   }
-
 }
 
 class _QuestionWidget extends StatelessWidget {
@@ -90,6 +140,7 @@ class _QuestionWidget extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
+
           ...shuffledAnswers.map((answer) {
 
             // display to user if chosen answer correct or wrong
