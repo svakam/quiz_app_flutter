@@ -143,23 +143,30 @@ class _QuestionWidget extends StatelessWidget {
 
           ...shuffledAnswers.map((answer) {
 
+            final isSelected = answer == selectedAnswer;
+            final isCorrect = answer == question.correctAnswer;
+
             // display to user if chosen answer correct or wrong
             Widget? trailing;
             if (submitted) {
-              if (answer == question.correctAnswer) {
+              if (isCorrect) {
                 trailing = const Icon(Icons.check, color: Colors.green);
-              } else if (answer == selectedAnswer) {
+              } else if (isSelected) {
                 trailing = const Icon(Icons.close, color: Colors.red);
               }
             }
 
-            return RadioListTile<String>(
+            return ListTile(
               title: Text(answer),
-              secondary: trailing,
-              value: answer,
-              groupValue: selectedAnswer,
-              onChanged: null,
+              trailing: trailing,
+              leading: Icon(
+                isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              ),
               dense: true,
+              contentPadding: EdgeInsets.zero,
+              onTap: submitted ? null : () => onSelect(answer),
             );
           }),
           const Divider(),
@@ -187,6 +194,7 @@ class _ResultsWidget extends StatelessWidget {
       children: [
         Text(
           'Results: $score / $total ($pct%)',
+          style: Theme.of(context).textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),
