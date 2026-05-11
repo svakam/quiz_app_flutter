@@ -17,9 +17,6 @@ class MyApp extends StatelessWidget {
       create: (_) => QuizStore(),
       child: MaterialApp(
         title: 'QuizCraft',
-        theme: ThemeData(
-          colorScheme: .fromSeed(seedColor: Colors.black12),
-        ),
         debugShowCheckedModeBanner: false,
         home: const QuizListScreen(),
       )
