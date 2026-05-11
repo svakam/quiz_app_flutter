@@ -14,6 +14,7 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
   final _formKey = GlobalKey<FormState>(); // manage state
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _timeLimitController = TextEditingController();
   final List<_QuestionFormData> _questions = []; // init empty list
 
   // always initialize state with at least 1 add question (no blank quizzes)
@@ -27,6 +28,7 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _timeLimitController.dispose();
     for (final q in _questions) {
       q.dispose();
     }
@@ -48,6 +50,10 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
     // VALIDATION: if invalid state, return ctrl back to quiz screen user input
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
+    final timeLimitInput = _timeLimitController.text.trim();
+    final int? timeLimitSeconds = timeLimitInput.isEmpty ? null :
+        int.parse(timeLimitInput) * 60;
+
     // collect all input question info from user (list-ify lists too)
     final questions = _questions
         .map((q) => Question(
@@ -65,6 +71,7 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
         description: _descriptionController.text.trim(),
         questions: questions,
         createdAt: DateTime.now(),
+        timeLimitSeconds: timeLimitSeconds,
     ));
     
     Navigator.pop(context);
@@ -88,7 +95,7 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
           children: [
             TextFormField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(labelText: 'Title'),
               textCapitalization: TextCapitalization.sentences,
               validator: (v) =>
                 (v == null || v.trim().isEmpty) ? 'Required' : null,
@@ -96,12 +103,34 @@ class _NewQuizScreenState extends State<NewQuizScreen> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
+              decoration: const InputDecoration(labelText: 'Description'),
+              textCapitalization: TextCapitalization.sentences,
               maxLines: 2,
               validator: (v) =>
                 (v == null || v.trim().isEmpty) ? 'Required' : null,
             ),
             const SizedBox(height: 12),
+
+            // time limit
+            TextFormField(
+              controller: _timeLimitController,
+              decoration: const InputDecoration(
+                  labelText: 'Time Limit (minutes, optional)',
+                  hintText: 'Leave blank for no time limit',
+              ),
+              keyboardType: TextInputType.number,
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return null;
+                final parsed = int.tryParse(v.trim());
+                if (parsed == null || parsed <= 0) {
+                  return 'Enter number greater than 0!';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 12),
+
+            // Question list
             const Text(
               'Questions',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
