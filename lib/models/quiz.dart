@@ -20,6 +20,7 @@ class Quiz {
   final String description;
   final DateTime createdAt;
   final List<Question> questions;
+  final int? timeLimitSeconds; // null = no limit
 
   const Quiz({
     required this.id,
@@ -27,5 +28,6 @@ class Quiz {
     required this.description,
     required this.createdAt,
     required this.questions,
+    this.timeLimitSeconds,
   });
 }
